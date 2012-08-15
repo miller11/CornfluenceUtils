@@ -1,0 +1,65 @@
+<project>
+
+    <path id="lib">
+       <fileset dir="lib">
+           <include name="*.jar"/>
+       </fileset>
+    </path>
+
+    <target name="clean">
+        <delete dir="build"/>
+    </target>
+
+    <target name="compile" depends="clean">
+        <mkdir dir="build/classes"/>
+        <javac srcdir="src" destdir="build/classes" debug="on" includeantruntime="false">
+            <classpath refid="lib"/>
+        </javac>
+    </target>
+
+    <target name="jar" depends="compile">
+        <mkdir dir="build/jar"/>
+        <jar destfile="build/jar/EncryptionTool.jar" basedir="build/classes">
+            <manifest>
+                <attribute name="Main-Class" value="EncryptionTool"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="run" depends="jar">
+        <java jar="build/jar/EncryptionTool.jar" fork="true"/>
+    </target>
+
+    <target name="encrypt" depends="jar">
+        <input message="Enter key name:" addproperty="keyName"/>
+        <input message="Enter String to encrypt:" addproperty="text"/>
+        <java jar="build/jar/EncryptionTool.jar" fork="true">
+            <classpath refid="lib"/>
+
+            <arg value="encrypt"/>
+            <arg value="${keyName}"/>
+            <arg value="${text}"/>
+        </java>
+    </target>
+
+    <target name="decrypt" depends="jar">
+        <input message="Enter String to encrypt:" addproperty="text"/>
+        <java jar="build/jar/EncryptionTool.jar" fork="true">
+
+            <arg value="decrypt"/>
+            <arg value="${text}"/>
+        </java>
+    </target>
+
+    <target name="addKey" depends="jar">
+        <input message="Enter the name of the desired key:" addproperty="name"/>
+        <input message="Enter length of desired key:" addproperty="length"/>
+        <java jar="build/jar/EncryptionTool.jar" fork="true">
+
+            <arg value="addKey"/>
+            <arg value="${name}"/>
+            <arg value="${length}"/>
+        </java>
+
+    </target>
+</project>
